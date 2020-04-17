@@ -157,4 +157,63 @@ router.delete('/', auth, async (req, res) => {
   }
 });
 
+// @route   PUT api/profile/experience
+// @desc    Add profile experience
+// @access  Private
+router.put('/experience', [ auth,
+  [
+    check('title', 'Title is required')
+      .not()
+      .isEmpty(),
+    check('company', 'Company is required')
+      .not()
+      .isEmpty(),
+    check('from', 'Start date is required')
+      .not()
+      .isEmpty()
+  ]
+], async (req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array()});
+  }
+
+  // destructuring
+  const {
+    title,
+    company,
+    location,
+    from,
+    to,
+    current,
+    description
+  } = req.body;
+
+  // Since value and variable name are the same you don't need to assign it like this: title: title
+  const newExp = {
+    title,
+    company,
+    location,
+    from,
+    to,
+    current,
+    description
+  }
+
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    // Since experience is an array we can use array methods
+    // Instead of using push we can use unshift to put the newst to the beginning
+    profile.experience.unshift(newExp);
+
+    await profile.save();
+
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
 module.exports = router;

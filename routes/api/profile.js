@@ -224,10 +224,100 @@ router.delete('/experience/:exp_id', auth, async (req, res) => {
     const profile = await Profile.findOne({ user: req.user.id });
 
     // Get remove index for experience
-    const removeIndex = profile.experience.map(item => item.id)
+    const removeIndex = profile.experience
+      .map(item => item.id)
       .indexOf(req.params.exp_id);
 
-      profile.experience.splice(removeIndex, 1);
+      // profile.experience.splice(removeIndex, 1);
+
+      await profile.experience.remove(profile.experience[removeIndex]);
+
+      await profile.save();
+
+      res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   PUT api/profile/education
+// @desc    Add profile education
+// @access  Private
+router.put('/education', [ auth,
+  [
+    check('school', 'School is required')
+      .not()
+      .isEmpty(),
+    check('degree', 'Degree is required')
+      .not()
+      .isEmpty(),
+    check('fieldofstudy', 'Field of study is required')
+      .not()
+      .isEmpty(),
+    check('from', 'Start date is required')
+      .not()
+      .isEmpty()
+  ]
+], async (req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array()});
+  }
+
+  // destructuring
+  const {
+    school,
+    degree,
+    fieldofstudy,
+    from,
+    to,
+    current,
+    description
+  } = req.body;
+
+  // Since value and variable name are the same you don't need to assign it like this: title: title
+  const newEdu = {
+    school,
+    degree,
+    fieldofstudy,
+    from,
+    to,
+    current,
+    description
+  }
+
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    // Since experience is an array we can use array methods
+    // Instead of using push we can use unshift to put the newst to the beginning
+    profile.education.unshift(newEdu);
+
+    await profile.save();
+
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   DELETE api/profile/education/:edu_id
+// @desc    Delete education from profile
+// @access  Private
+router.delete('/education/:edu_id', auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    // Get remove index for experience
+    const removeIndex = profile.education
+      .map(item => item.id)
+      .indexOf(req.params.edu_id);
+
+      // profile.education.splice(removeIndex, 1);
+
+      await profile.education.remove(profile.education[removeIndex]);
 
       await profile.save();
 

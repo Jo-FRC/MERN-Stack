@@ -4,6 +4,7 @@ import Navbar from './components/layout/Navbar';
 import Landing from './components/layout/Landing';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
+import Alert from './components/layout/Alert';
 // Redux
 // Provide is able to connect react and redux by wrapping the app in it
 // so that all the routes can access our app level state
@@ -20,6 +21,7 @@ const App = () => (
         <Navbar />
         <Route exact path="/" component={ Landing } />
         <section className="container">
+          <Alert />
           <Switch>
             <Route exact path="/register" component={ Register } />
             <Route exact path="/login" component={ Login } />

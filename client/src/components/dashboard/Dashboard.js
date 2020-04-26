@@ -5,12 +5,13 @@ import { getCurrentProfile } from '../../actions/profile';
 
 const Dashboard = ({
   getCurrentProfile,
+  deleteAccount,
   auth: { user },
   profile: { profile }
 }) => {
   useEffect(() => {
     getCurrentProfile();
- }, [getCurrentProfile]);
+  }, [getCurrentProfile]);
 
 
   return (

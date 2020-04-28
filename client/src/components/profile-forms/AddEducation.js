@@ -25,7 +25,8 @@ const AddEducation = ({ addEducation, history }) => {
     current
   } = formData;
 
-  const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const onChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
   return (
     <Fragment>
@@ -65,10 +66,11 @@ const AddEducation = ({ addEducation, history }) => {
         <div className="form-group">
           <input
             type="text"
-            placeholder="Field of Study"
+            placeholder="* Field of Study"
             name="fieldofstudy"
             value={fieldofstudy}
             onChange={onChange}
+            required
           />
         </div>
         <div className="form-group">
